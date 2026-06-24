@@ -1,0 +1,2 @@
+sap.ui.define(["com/bot/resto/restaurantbot/controller/View1.controller"],function(t){"use strict";QUnit.module("View1 Controller");QUnit.test("I should test the View1 controller",function(o){var e=new t;e.onInit();o.ok(e)})});
+//# sourceMappingURL=View1.controller.js.map
