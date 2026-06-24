@@ -38,7 +38,7 @@
 		}
 	},
 	"sap.ui5": {
-		"flexEnabled": true,
+		"flexEnabled": false,
 		"dependencies": {
 			"minUI5Version": "1.149.0",
 			"libs": {
@@ -82,17 +82,17 @@
 			},
 			"routes": [
 				{
-					"name": "RouteView1",
+					"name": "RouteTargetOrderDetailsScreen",
 					"pattern": ":?query:",
 					"target": [
-						"TargetView1"
+						"TargetOrderDetailsScreen"
 					]
 				}
 			],
 			"targets": {
-				"TargetView1": {
-					"id": "View1",
-					"name": "View1"
+				"TargetOrderDetailsScreen": {
+					"id": "OrderDetailsScreen",
+					"name": "OrderDetailsScreen"
 				}
 			}
 		},

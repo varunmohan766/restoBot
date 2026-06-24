@@ -1,0 +1,78 @@
+<mvc:View
+    controllerName="com.bot.resto.restaurantbot.controller.OrderDetailsScreen"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+>
+    <Page title="Orders Dashboard">
+        <content>
+            <Table
+                id="ordersTable"
+                items="{/Orders}"
+            >
+                <headerToolbar>
+                    <Toolbar>
+                        <Title
+                            text="Customer Orders"
+                            level="H2"
+                        />
+                        <ToolbarSpacer />
+                        <Button
+                            icon="sap-icon://refresh"
+                            press="onRefresh"
+                        />
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column>
+                        <Text text="Order ID" />
+                    </Column>
+                    <Column>
+                        <Text text="Customer Name" />
+                    </Column>
+                    <Column>
+                        <Text text="Status" />
+                    </Column>
+                    <Column>
+                        <Text text="Actions" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{path: 'ID', targetType: 'any'}" />
+                            <Text text="{customerName}" />
+                            <ObjectStatus
+                                text="{status}"
+                                state="{= ${status} === 'Accepted' ? 'Success' :
+                                    ${status} === 'Rejected' ? 'Error' :
+                                    ${status} === 'Completed' ? 'Information' : 'Warning'
+                                }"
+                            />
+                            <!-- Action Buttons -->
+                            <HBox>
+                                <Button
+                                    text="Accept"
+                                    type="Accept"
+                                    press="onAccept"
+                                    visible="{= ${status} === 'New' }"
+                                />
+                                <Button
+                                    text="Reject"
+                                    type="Reject"
+                                    press="onReject"
+                                    visible="{= ${status} === 'New' }"
+                                />
+                                <Button
+                                    text="Complete"
+                                    type="Emphasized"
+                                    press="onComplete"
+                                    visible="{= ${status} === 'Accepted' }"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
