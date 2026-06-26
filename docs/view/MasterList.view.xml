@@ -1,0 +1,61 @@
+<mvc:View
+    controllerName="com.bot.resto.restaurantbot.controller.MasterList"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:semantic="sap.f.semantic">
+
+    <semantic:SemanticPage>
+
+        <semantic:titleHeading>
+            <Title text="Restaurant Orders"/>
+        </semantic:titleHeading>
+
+        <semantic:content>
+
+            <List
+                id="list"
+                items="{/Orders}"
+                growing="true"
+                growingScrollToLoad="true"
+                selectionChange=".onSelectionChange">
+
+                <!-- HEADER TOOLBAR -->
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <SearchField
+                            width="100%"
+                            placeholder="Search Orders"
+                            search=".onSearch" />
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://filter"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+
+                <items>
+                    <ObjectListItem
+                        type="Active"
+                        press=".onSelectionChange"
+                        title="{= 'Order #' + ${id}}"
+                        number="{totalAmount}"
+                        numberUnit="₹">
+
+                        <firstStatus>
+                            <ObjectStatus
+                                text="{status}"
+                                state="{Warning}"/>
+                        </firstStatus>
+
+                        <attributes>
+                            <ObjectAttribute text="{customerName}" />
+                            <ObjectAttribute text="{mobile}" />
+                        </attributes>
+
+                    </ObjectListItem>
+                </items>
+
+            </List>
+
+        </semantic:content>
+    </semantic:SemanticPage>
+
+</mvc:View>

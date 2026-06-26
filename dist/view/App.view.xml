@@ -1,7 +1,21 @@
-<mvc:View controllerName="com.bot.resto.restaurantbot.controller.App"
-    displayBlock="true"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <App id="app">
-    </App>
+<mvc:View
+    controllerName="com.bot.resto.restaurantbot.controller.App"
+    height="100%"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+
+    <App
+		id="app">
+		<f:FlexibleColumnLayout
+			id="layout"
+			layout="{layout>/layout}"
+			backgroundDesign="Translucent">
+		</f:FlexibleColumnLayout>
+	</App>
+<!-- <f:FlexibleColumnLayout
+    id="layout"
+    layout="{layout>/layout}" /> -->
+
+    
 </mvc:View>

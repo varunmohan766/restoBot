@@ -1,0 +1,147 @@
+{
+  "Orders": [
+    {
+      "id": "1001",
+      "customerName": "Ravi Kumar",
+      "mobile": "9876543210",
+      "status": "New",
+      "source": "Table",
+      "totalAmount": 450,
+      "paymentStatus": "Pending",
+      "items": [
+        {
+          "id": "1",
+          "name": "Fried Rice",
+          "qty": 2,
+          "price": 100,
+          "total": 200,
+          "status": "Pending"
+        },
+        {
+          "id": "2",
+          "name": "Chicken Curry",
+          "qty": 1,
+          "price": 250,
+          "total": 250,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "id": "1002",
+      "customerName": "Anita Sharma",
+      "mobile": "9123456780",
+      "status": "Preparing",
+      "source": "Online",
+      "totalAmount": 620,
+      "paymentStatus": "Paid",
+      "items": [
+        {
+          "id": "1",
+          "name": "Paneer Butter Masala",
+          "qty": 2,
+          "price": 180,
+          "total": 360,
+          "status": "Cooking"
+        },
+        {
+          "id": "2",
+          "name": "Butter Naan",
+          "qty": 4,
+          "price": 50,
+          "total": 200,
+          "status": "Cooking"
+        },
+        {
+          "id": "3",
+          "name": "Lassi",
+          "qty": 2,
+          "price": 30,
+          "total": 60,
+          "status": "Ready"
+        }
+      ]
+    },
+    {
+      "id": "1003",
+      "customerName": "Rahul Nair",
+      "mobile": "9988776655",
+      "status": "Completed",
+      "source": "Delivery",
+      "totalAmount": 300,
+      "paymentStatus": "Paid",
+      "items": [
+        {
+          "id": "1",
+          "name": "Veg Biryani",
+          "qty": 1,
+          "price": 200,
+          "total": 200,
+          "status": "Delivered"
+        },
+        {
+          "id": "2",
+          "name": "Raita",
+          "qty": 1,
+          "price": 100,
+          "total": 100,
+          "status": "Delivered"
+        }
+      ]
+    },
+    {
+      "id": "1004",
+      "customerName": "Priya Menon",
+      "mobile": "9871234560",
+      "status": "Cancelled",
+      "source": "Online",
+      "totalAmount": 520,
+      "paymentStatus": "Refunded",
+      "items": [
+        {
+          "id": "1",
+          "name": "Chicken Biryani",
+          "qty": 2,
+          "price": 250,
+          "total": 500,
+          "status": "Cancelled"
+        },
+        {
+          "id": "2",
+          "name": "Soft Drink",
+          "qty": 1,
+          "price": 20,
+          "total": 20,
+          "status": "Cancelled"
+        }
+      ]
+    },
+    {
+      "id": "1005",
+      "customerName": "Kiran Patel",
+      "mobile": "9012345678",
+      "status": "New",
+      "source": "Takeaway",
+      "totalAmount": 150,
+      "paymentStatus": "Pending",
+      "items": [
+        {
+          "id": "1",
+          "name": "Masala Dosa",
+          "qty": 1,
+          "price": 100,
+          "total": 100,
+          "status": "Pending"
+        },
+        {
+          "id": "2",
+          "name": "Coffee",
+          "qty": 1,
+          "price": 50,
+          "total": 50,
+          "status": "Pending"
+        }
+      ]
+    }
+  ]
+}

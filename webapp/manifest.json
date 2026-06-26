@@ -14,7 +14,9 @@
       "id": "@sap/generator-fiori:basic",
       "version": "1.27.0",
       "toolsId": "0b656de3-05cb-4cbe-9571-4c1eacf09879"
-    }
+    },    
+    "supportedLocales": ["en"],
+    "fallbackLocale": "en"
   },
   "sap.ui": {
     "technology": "UI5",
@@ -38,7 +40,8 @@
       "minUI5Version": "1.149.0",
       "libs": {
         "sap.m": {},
-        "sap.ui.core": {}
+        "sap.ui.core": {},
+        "sap.f": {}
       }
     },
     "contentDensities": {
@@ -61,38 +64,44 @@
       ]
     },
     "routing": {
-      "config": {
-        "routerClass": "sap.m.routing.Router",
-        "controlAggregation": "pages",
-        "controlId": "app",
-        "transition": "slide",
-        "type": "View",
-        "viewType": "XML",
-        "path": "com.bot.resto.restaurantbot.view",
-        "async": true,
-        "viewPath": "com.bot.resto.restaurantbot.view"
-      },
-      "routes": [
-        {
-          "name": "RouteTargetOrderDetailsScreen",
-          "pattern": ":?query:",
-          "target": [
-            "TargetOrderDetailsScreen"
-          ]
+        "config": {
+            "routerClass": "sap.f.routing.Router",
+            "type": "View",
+            "viewType": "XML",
+            "path": "com.bot.resto.restaurantbot.view",
+            "controlId": "layout",
+            "controlAggregation": "beginColumnPages"
+        },
+        "routes": [
+          {
+            "pattern": "",
+            "name": "master",
+            "target": "master"
+          },
+          {
+            "pattern": "detail/{id}",
+            "name": "detail",
+            "target": ["master","detail"]
+          }
+        ],
+        "targets": {
+          "master": {
+            "name": "MasterList",
+            "level": 1,
+            "id": "master"
+          },
+          "detail": {
+            "name": "OrderDetailsScreen",
+            "id": "detail",
+            "level": 1,
+            "controlAggregation": "midColumnPages"
+          }
         }
-      ],
-      "targets": {
-        "TargetOrderDetailsScreen": {
-          "id": "OrderDetailsScreen",
-          "name": "OrderDetailsScreen"
-        }
-      }
     },
     "rootView": {
       "viewName": "com.bot.resto.restaurantbot.view.App",
       "type": "XML",
-      "id": "App",
-      "async": true
+      "id": "App"
     }
   }
 }
