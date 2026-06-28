@@ -7,6 +7,15 @@ sap.ui.define([
 
     return Controller.extend("com.bot.resto.restaurantbot.controller.MasterList", {
 
+        onInit: function () {
+            // this.getOwnerComponent()
+            //     .getRouter()
+            //     .getRoute("master")
+            //     .attachPatternMatched(this._onMatched, this);
+
+            this._getLoginToken();
+        },
+
         onSelectionChange: function (oEvent) {
             const oItem = oEvent.getParameter("listItem") || oEvent.getSource();
             const sId = oItem.getBindingContext().getProperty("id");
@@ -31,6 +40,38 @@ sap.ui.define([
             } else {
                 oBinding.filter([]);
             }
+        },
+        _getLoginToken: function () {
+            fetch("http://localhost:3000/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: "admin",
+                        password: "admin123"
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.myToken = data.token;
+                    this._getOrders();
+                })
+                .catch(err => console.error(err));
+        },
+        _getOrders: function () {
+            fetch("http://localhost:3000/orders", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + this.myToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var oModel = new sap.ui.model.json.JSONModel(data);
+                    sap.ui.getCore().setModel(oModel, "apiModel");
+                })
+                .catch(err => console.error(err));
         }
 
     });
