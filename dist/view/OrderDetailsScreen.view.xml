@@ -17,19 +17,29 @@
 
             <l:HorizontalLayout>
 
-                <l:VerticalLayout class="sapUiMediumMarginEnd">
+                <l:VerticalLayout class="sapUiLargeMarginEnd">
 
                     <ObjectAttribute title="Customer" text="{customerName}" />
-                    <ObjectAttribute title="Mobile" text="{mobile}" />
-                    <ObjectAttribute title="Payment" text="{paymentStatus}" />
-                    <ObjectAttribute title="Status" text="{status}" />
+                    <!-- <ObjectAttribute title="Mobile" text="{mobile}" />                     -->
+                    <Link text="{mobile}" href="{= 'tel:' + ${mobile} }" />
+
+                    <!-- <ObjectAttribute title="Payment" text="{paymentStatus}" /> -->
+                    <!-- <ObjectAttribute title="Status" text="{status}" /> -->
+                    <!-- <ObjectStatus title="Status" text="{status}" state="Success" /> -->
 
                 </l:VerticalLayout>
+                <!-- <l:VerticalLayout class="sapUiLargeMarginEnd">
+                    <Label text="Payment"/>
+                    <ObjectStatus text="{paymentStatus}" state="Success" />
+                </l:VerticalLayout> -->
 
-                <l:VerticalLayout>
+                <l:VerticalLayout class="sapUiLargeMarginEnd">
                     <Label text="Total"/>
                     <ObjectNumber number="{totalAmount}" unit="₹"/>
-                    <ObjectStatus text="In Stock" state="Success" />
+                </l:VerticalLayout>
+                <l:VerticalLayout>
+                    <Label text="Status"/>
+                    <ObjectStatus text="{status}" state="Success" />
                 </l:VerticalLayout>
 
             </l:HorizontalLayout>
@@ -44,6 +54,8 @@
                 <headerToolbar>
                     <Toolbar>
                         <Title text="Line Items"/>
+                        <ToolbarSpacer/>
+                        <Button text="Add Item" press="onAddItem" visible="{/isEditMode}"/>
                     </Toolbar>
                 </headerToolbar>
 
@@ -53,16 +65,21 @@
                     <Column><Text text="Qty"/></Column>
                     <Column><Text text="Total"/></Column>
                     <Column><Text text="Ready"/></Column>
+                    <Column visible="{/isEditMode}"><Text text="Action"/></Column>
                 </columns>
 
                 <items>
                     <ColumnListItem>
                         <cells>
-                            <Text text="{name}" />
+                            <!-- <Text text="{name}" /> -->
+                            <Input value="{name}" editable="{/isEditMode}"/>
                             <Text text="{price}" />
-                            <Text text="{qty}" />
+                            <!-- <Text text="{qty}" /> -->
+                            <Input value="{qty}" editable="{/isEditMode}"/>
                             <Text text="{total}" />
-                            <Text text="{status}" />
+                            <!-- <Text text="{status}" /> -->
+                            <CheckBox selected="{isReady}"/>
+                            <Button text="Delete" press="onDeleteItem" visible="{/isEditMode}"/>
                         </cells>
                     </ColumnListItem>
                 </items>
@@ -71,13 +88,26 @@
 
         </semantic:content>
 
+        <semantic:titleMainAction>
+			<semantic:TitleMainAction text="Edit" press="onEdit" visible="{= !${/isEditMode}}"/>
+		</semantic:titleMainAction>
+
+        <semantic:footerMainAction>
+			<semantic:FooterMainAction text="Save" press="onSave" visible="{/isEditMode}"/>
+		</semantic:footerMainAction>
+
+		<semantic:footerCustomActions>
+			<Button  text="Cancel" press="onCancel" visible="{/isEditMode}"/>
+		</semantic:footerCustomActions>
+
         <!-- ✅ BUTTONS (THIS WAS MISSING) -->
         <semantic:footerCustomActions>
 
             <!-- <Toolbar> -->
                 <!-- <ToolbarSpacer/> -->
-                <Button text="Accept" type="Accept"/>
-                <Button text="Reject" type="Reject"/>
+                <Button text="Complete" type="Accept" press="onComplete" visible="{= !${/isEditMode} &amp;&amp; ${status} === 'Accepted' &amp;&amp; ${status} !== 'Completed'}"/>
+                <Button text="Accept" type="Accept" press="onAccept" visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Completed'}" />
+                <Button text="Reject" type="Reject" press="onReject" visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Completed'}"/>
             <!-- </Toolbar> -->
 
         </semantic:footerCustomActions>
