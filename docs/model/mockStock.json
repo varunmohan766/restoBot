@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "ItemId": "1001",
+      "Name": "Veg Burger",
+      "Description": "Fresh veg patty with lettuce",
+      "Quantity": 50,
+      "Price": 120
+    },
+    {
+      "ItemId": "1002",
+      "Name": "Chicken Burger",
+      "Description": "Grilled chicken with cheese",
+      "Quantity": 40,
+      "Price": 150
+    },
+    {
+      "ItemId": "1003",
+      "Name": "French Fries",
+      "Description": "Crispy salted fries",
+      "Quantity": 100,
+      "Price": 80
+    },
+    {
+      "ItemId": "1004",
+      "Name": "Pizza",
+      "Description": "Cheese burst pizza",
+      "Quantity": 25,
+      "Price": 250
+    },
+    {
+      "ItemId": "1005",
+      "Name": "Cold Coffee",
+      "Description": "Chilled coffee with ice cream",
+      "Quantity": 30,
+      "Price": 90
+    }
+  ]
+}

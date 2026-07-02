@@ -57,7 +57,7 @@ sap.ui.define([
                     this.myToken = data.token;
                     this._getOrders();
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.log(err));
         },
         _getOrders: function () {
             fetch("http://localhost:3000/orders", {
@@ -72,7 +72,9 @@ sap.ui.define([
                     sap.ui.getCore().setModel(oModel, "apiModel");
                 })
                 .catch(err => console.error(err));
+        },        
+        onStockPress: function () {
+            this.getOwnerComponent().getRouter().navTo("stock");
         }
-
     });
 });

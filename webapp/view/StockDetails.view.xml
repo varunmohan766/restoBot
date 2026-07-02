@@ -1,0 +1,75 @@
+<mvc:View
+  controllerName="com.bot.resto.restaurantbot.controller.StockDetails"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m">
+
+  <Page title="Stock Management" 
+    showNavButton="true"
+    navButtonPress="onNavBack">
+
+    <content>
+      <Table id="stockTable" items="{stockModel>/items}">
+
+        <!-- HEADER -->
+        <headerToolbar>
+          <Toolbar>
+            <Title text="Stock Details"/>
+            <ToolbarSpacer/>
+
+            <Button text="Edit" press="onEditToggle"/>
+            <Button text="Add" press="onAddItem" visible="{stockModel>/isEdit}"/>
+            <Button text="Save" type="Emphasized" press="onSave" visible="{stockModel>/isEdit}"/>
+          </Toolbar>
+        </headerToolbar>
+
+        <!-- COLUMNS -->
+        <columns>
+          <Column><Text text="Item ID"/></Column>
+          <Column><Text text="Name"/></Column>
+          <Column><Text text="Description"/></Column>
+          <Column><Text text="Quantity"/></Column>
+          <Column><Text text="Price"/></Column>
+          <Column width="5rem"><Text text=""/></Column>
+        </columns>
+
+        <!-- ITEMS -->
+        <items>
+          <ColumnListItem>
+            <cells>
+
+              <!-- ITEM ID -->
+              <Text text="{stockModel>ItemId}"/>
+              <!-- <Input value="{stockModel>ItemId}" editable="{stockModel>/isEdit}"/> -->
+
+              <!-- NAME -->
+              <!-- <Text text="{stockModel>Name}" visible="{= !${stockModel>/isEdit} }"/> -->
+              <Input value="{stockModel>Name}" editable="{stockModel>/isEdit}"/>
+
+              <!-- DESC -->
+              <!-- <Text text="{stockModel>Description}" visible="{= !${stockModel>/isEdit} }"/> -->
+              <Input value="{stockModel>Description}" editable="{stockModel>/isEdit}"/>
+
+              <!-- QTY -->
+              <!-- <Text text="{stockModel>Quantity}" visible="{= !${stockModel>/isEdit} }"/> -->
+              <Input value="{stockModel>Quantity}" type="Number" editable="{stockModel>/isEdit}"/>
+
+              <!-- PRICE -->
+              <!-- <Text text="{stockModel>Price}" visible="{= !${stockModel>/isEdit} }"/> -->
+              <Input value="{stockModel>Price}" type="Number" editable="{stockModel>/isEdit}"/>
+
+              <!-- DELETE BUTTON -->
+              <Button
+                icon="sap-icon://delete"
+                type="Negative"
+                visible="{stockModel>/isEdit}"
+                press="onDeleteItem"/>
+                
+            </cells>
+          </ColumnListItem>
+        </items>
+
+      </Table>
+    </content>
+
+  </Page>
+</mvc:View>

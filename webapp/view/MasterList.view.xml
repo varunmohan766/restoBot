@@ -48,6 +48,7 @@
                         <attributes>
                             <ObjectAttribute text="{customerName}" />
                             <ObjectAttribute text="{mobile}" />
+                            <!-- <Link text="{mobile}" href="{= 'tel:' + ${mobile} }" /> -->
                         </attributes>
 
                     </ObjectListItem>
@@ -56,6 +57,9 @@
             </List>
 
         </semantic:content>
+        <semantic:titleMainAction>
+			<semantic:TitleMainAction text="Stock Details" press="onStockPress"/>
+		</semantic:titleMainAction>
     </semantic:SemanticPage>
 
 </mvc:View>

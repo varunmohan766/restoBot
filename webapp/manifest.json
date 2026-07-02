@@ -82,6 +82,12 @@
             "pattern": "detail/{id}",
             "name": "detail",
             "target": ["master","detail"]
+          },
+          {
+            "pattern": "stock",
+            "name": "stock",
+            "target": ["stock"],
+            "layout": "OneColumn"
           }
         ],
         "targets": {
@@ -95,6 +101,12 @@
             "id": "detail",
             "level": 1,
             "controlAggregation": "midColumnPages"
+          },
+          "stock": {
+            "name": "StockDetails",
+            "id": "stock",
+            "level": 1,
+            "controlAggregation": "beginColumnPages"
           }
         }
     },
