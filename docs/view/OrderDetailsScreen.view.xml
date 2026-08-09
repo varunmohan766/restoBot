@@ -72,10 +72,10 @@
                     <ColumnListItem>
                         <cells>
                             <!-- <Text text="{name}" /> -->
-                            <Input value="{name}" editable="{/isEditMode}"/>
+                            <Input value="{name}" editable="{/isEditMode}" change="onFieldChange"/>
                             <Text text="{price}" />
                             <!-- <Text text="{qty}" /> -->
-                            <Input value="{qty}" editable="{/isEditMode}"/>
+                            <Input value="{qty}" editable="{/isEditMode}" change="onFieldChange"/>
                             <Text text="{total}" />
                             <!-- <Text text="{status}" /> -->
                             <CheckBox selected="{isReady}"/>

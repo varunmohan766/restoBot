@@ -22,7 +22,12 @@ sap.ui.define([
             
             var oData = new sap.ui.model.json.JSONModel();
             // oData.loadData("model/data.json");
+
             oData.loadData(sap.ui.require.toUrl("com/bot/resto/restaurantbot/model/data.json"));
+            oData.attachRequestCompleted(function() {
+                var rawData = oData.getData();
+                oData.setData({ Orders: rawData, api:"https://clientapi.ask-assistant.com/" });
+            });
 
             this.setModel(oData);
 

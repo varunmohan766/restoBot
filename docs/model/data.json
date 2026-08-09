@@ -1,5 +1,4 @@
-{
-  "Orders": [
+ [
     {
       "id": "1001",
       "customerName": "Ravi Kumar",
@@ -8,6 +7,7 @@
       "source": "Table",
       "totalAmount": 450,
       "paymentStatus": "Pending",
+      "address": "123, MG Road, Bangalore",
       "items": [
         {
           "id": "1",
@@ -144,4 +144,3 @@
       ]
     }
   ]
-}

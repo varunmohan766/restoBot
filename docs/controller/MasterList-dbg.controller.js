@@ -7,13 +7,38 @@ sap.ui.define([
 
     return Controller.extend("com.bot.resto.restaurantbot.controller.MasterList", {
 
-        onInit: function () {
+        onInit: async function () {
             // this.getOwnerComponent()
             //     .getRouter()
             //     .getRoute("master")
             //     .attachPatternMatched(this._onMatched, this);
+            
+            const statuses = {
+                New : true,
+                Accepted : true,
+                Completed : false,
+                Rejected : false
+            };
+            this.getOwnerComponent().getModel().setProperty("/OrderStatus", statuses);
+            
+            // this.getView().getModel()
 
-            this._getLoginToken();
+            // this._getLoginToken();
+
+            try {
+                // First: get login token
+                await this._getLoginToken();
+
+                // Then: call orders with filters (empty object for now)
+                await this._getOrders(statuses);
+            } catch (err) {
+                console.error("Initialization failed:", err);
+                sap.m.MessageToast.show("Error initializing app: " + err.message);
+            }
+        },
+        onStatusFilter: function () {
+             this._getOrders(this.getOwnerComponent().getModel().getProperty("/OrderStatus"));
+            //  const selectedStatuses = Object.keys(statuses).filter(key => statuses[key]);             
         },
 
         onSelectionChange: function (oEvent) {
@@ -29,20 +54,62 @@ sap.ui.define([
         },
 
         onSearch: function (oEvent) {
-            const sQuery = oEvent.getParameter("query");
-            const oList = this.byId("list");
-            const oBinding = oList.getBinding("items");
+            // Collect values from UI controls
+//   const orderId = this.byId("orderIdInput").getValue();
+//   const name = this.byId("nameInput").getValue();
+//   const mobile = this.byId("mobileInput").getValue();
+//   const status = this.byId("statusSelect").getSelectedKey();
+const status = oEvent.getParameter("query");
+  // Build filters object
+//   const filters = { vSearchValue, name, mobile, status };
+const filters = {status};
 
-            if (sQuery) {
-                oBinding.filter([
-                    new Filter("customerName", FilterOperator.Contains, sQuery)
-                ]);
-            } else {
-                oBinding.filter([]);
-            }
+  // Call backend with filters
+  this._getOrders(filters);
+            // const sQuery = oEvent.getParameter("query");
+            // const oList = this.byId("list");
+            // const oBinding = oList.getBinding("items");
+
+            // if (sQuery) {
+            //     oBinding.filter([
+            //         new Filter("customerName", FilterOperator.Contains, sQuery)
+            //     ]);
+            // } else {
+            //     oBinding.filter([]);
+            // }
         },
-        _getLoginToken: function () {
-            fetch("http://localhost:3000/login", {
+        _getLoginToken: async function () {
+            try{
+                const api = this.getOwnerComponent().getModel().getProperty("/api");
+                const res = await fetch(api+"login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: "admin",
+                        password: "admin123"
+                    })
+                });
+                if (!res.ok) {
+                    // Non-200 status codes
+                    throw new Error(`Login failed: ${res.status} ${res.statusText}`);
+                }
+
+                const data = await res.json();
+                // this.myToken = data.token;
+                this.getOwnerComponent().getModel().setProperty("/myToken", data.token);
+
+            } catch (err) {
+                console.error("Error in _getLoginToken:", err);
+                sap.m.MessageToast.show("Login failed: " + err.message);
+                // Optionally rethrow if you want onInit to handle it
+                throw err;
+
+            }
+            
+                
+            /*fetch("http://localhost:3000/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -55,11 +122,43 @@ sap.ui.define([
                 .then(response => response.json())
                 .then(data => {
                     this.myToken = data.token;
-                    this._getOrders();
+                    // this._getOrders({});
                 })
-                .catch(err => console.log(err));
+                .catch(err => console.log(err));*/
         },
-        _getOrders: function () {
+        _getOrders: function (statuses) {
+            var oMainModel = this.getOwnerComponent().getModel();
+            const sMyToken = oMainModel.getProperty("/myToken");
+            const queryParams = new URLSearchParams();
+            // Object.entries(oFilters).forEach(([key, value]) => {
+            //     if (value) {
+            //     queryParams.append(key, value);
+            //     }
+            // });
+            // Pick only the statuses that are true
+            Object.entries(statuses).forEach(([key, value]) => {
+                if (value === true) {
+                queryParams.append("status", key);
+                }
+            });
+            const url = oMainModel.getProperty("/api")+"orderDetails";
+            const fullUrl = queryParams.toString() ? `${url}?${queryParams.toString()}` : url;
+            fetch(fullUrl, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + sMyToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    oMainModel.setProperty("/Orders", structuredClone(data.orderList));
+                    
+                    // var oModel = new sap.ui.model.json.JSONModel(data);
+                    // sap.ui.getCore().setModel(oModel, "apiModel");
+                })
+                .catch(err => console.error(err));
+        },
+        _getOrders1: function () {
             fetch("http://localhost:3000/orders", {
                     method: "GET",
                     headers: {
