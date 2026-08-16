@@ -203,7 +203,7 @@ sap.ui.define([
                 MessageToast.show("Saved successfully");
 
                 oModel.setProperty("/isEdit", false);
-                toModel.setProperty("/items", data.stockList);
+                oModel.setProperty("/items", data.stockList);
                 // this._loadData();
               })
               .catch(() => {

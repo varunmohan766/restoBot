@@ -72,13 +72,13 @@
                     <ColumnListItem>
                         <cells>
                             <!-- <Text text="{name}" /> -->
-                            <Input value="{name}" editable="{/isEditMode}" change="onFieldChange"/>
+                            <Input value="{name}" editable="{= ${/isEditMode} &amp;&amp; ${_idNew} !== undefined}" change="onItemChange" showValueHelp="true" valueHelpRequest="onNameValueHelp"/>
                             <Text text="{price}" />
                             <!-- <Text text="{qty}" /> -->
-                            <Input value="{qty}" editable="{/isEditMode}" change="onFieldChange"/>
-                            <Text text="{total}" />
+                            <Input value="{qty}" editable="{/isEditMode}" change="onQtyChange"/>
+                            <Text text="{total}"/>
                             <!-- <Text text="{status}" /> -->
-                            <CheckBox selected="{isReady}"/>
+                            <CheckBox selected="{isReady}" select="onChangeisReady"/>
                             <Button text="Delete" press="onDeleteItem" visible="{/isEditMode}"/>
                         </cells>
                     </ColumnListItem>
@@ -89,7 +89,7 @@
         </semantic:content>
 
         <semantic:titleMainAction>
-			<semantic:TitleMainAction text="Edit" press="onEdit" visible="{= !${/isEditMode}}"/>
+			<semantic:TitleMainAction text="Edit" press="onEdit" visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Completed' &amp;&amp; ${status} !== 'Rejected' }"/>
 		</semantic:titleMainAction>
 
         <semantic:footerMainAction>
