@@ -1,6 +1,7 @@
 <mvc:View
   controllerName="com.bot.resto.restaurantbot.controller.StockDetails"
   xmlns:mvc="sap.ui.core.mvc"
+  xmlns:core="sap.ui.core"
   xmlns="sap.m">
 
   <Page title="Stock Management" 
@@ -29,6 +30,9 @@
           <Column><Text text="Description"/></Column>
           <Column><Text text="Quantity"/></Column>
           <Column><Text text="Price"/></Column>
+          <Column><Text text="Status"/></Column>
+          <Column><Text text="Category"/></Column>
+          <Column><Text text="veg / non-veg"/></Column>
           <Column width="5rem"><Text text=""/></Column>
         </columns>
 
@@ -36,26 +40,26 @@
         <items>
           <ColumnListItem>
             <cells>
+              <Text text="{stockModel>id}"/>
+              <Input value="{stockModel>Name}" editable="{stockModel>/isEdit}" change="onFieldChange"/>
+              <Input value="{stockModel>Description}" editable="{stockModel>/isEdit}"  change="onFieldChange"/>
+              <Input value="{stockModel>Quantity}" type="Number" editable="{stockModel>/isEdit}"  change="onFieldChange"/>
+              <Input value="{stockModel>Price}" type="Number" editable="{stockModel>/isEdit}"  change="onFieldChange"/>
+              <Select selectedKey="{stockModel>Status}" editable="{stockModel>/isEdit}"  change="onFieldChange">
+                <items>
+                  <core:Item key="available" text="available"/>
+                  <core:Item key="outOfStock" text="out-of-stock"/>
+                </items>
+              </Select>
+              <Input value="{stockModel>category}" editable="{stockModel>/isEdit}"  change="onFieldChange"/>
+              
+              <Select selectedKey="{stockModel>veg_nonveg}" editable="{stockModel>/isEdit}"  change="onFieldChange">
+                <items>
+                  <core:Item key="veg" text="veg"/>
+                  <core:Item key="nonVeg" text="non-veg"/>
+                </items>
+              </Select>
 
-              <!-- ITEM ID -->
-              <Text text="{stockModel>ItemId}"/>
-              <!-- <Input value="{stockModel>ItemId}" editable="{stockModel>/isEdit}"/> -->
-
-              <!-- NAME -->
-              <!-- <Text text="{stockModel>Name}" visible="{= !${stockModel>/isEdit} }"/> -->
-              <Input value="{stockModel>Name}" editable="{stockModel>/isEdit}"/>
-
-              <!-- DESC -->
-              <!-- <Text text="{stockModel>Description}" visible="{= !${stockModel>/isEdit} }"/> -->
-              <Input value="{stockModel>Description}" editable="{stockModel>/isEdit}"/>
-
-              <!-- QTY -->
-              <!-- <Text text="{stockModel>Quantity}" visible="{= !${stockModel>/isEdit} }"/> -->
-              <Input value="{stockModel>Quantity}" type="Number" editable="{stockModel>/isEdit}"/>
-
-              <!-- PRICE -->
-              <!-- <Text text="{stockModel>Price}" visible="{= !${stockModel>/isEdit} }"/> -->
-              <Input value="{stockModel>Price}" type="Number" editable="{stockModel>/isEdit}"/>
 
               <!-- DELETE BUTTON -->
               <Button

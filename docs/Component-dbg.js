@@ -20,7 +20,7 @@ sap.ui.define([
             this.setModel(models.createDeviceModel(), "device");
 
             
-            var oData = new sap.ui.model.json.JSONModel({api:"https://clientapi.ask-assistant.com/"});
+            var oData = new sap.ui.model.json.JSONModel({api:"https://clientapiinfi.ask-assistant.com/api/testResto/"});
             // oData.loadData("model/data.json");
 
             /*oData.loadData(sap.ui.require.toUrl("com/bot/resto/restaurantbot/model/data.json"));

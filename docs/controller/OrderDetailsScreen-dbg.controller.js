@@ -1,78 +1,45 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/m/MessageToast"
-], function (Controller, MessageToast) {
+    "sap/m/MessageToast",
+    "sap/ui/core/Fragment"
+], function (Controller, MessageToast, Fragment) {
     "use strict";
 
     return Controller.extend("com.bot.resto.restaurantbot.controller.OrderDetailsScreen", {
 
         onInit: function () {
-            this.getOwnerComponent()
-                .getRouter()
-                .getRoute("detail")
-                .attachPatternMatched(this._onMatched, this);
-                window.addEventListener("popstate", this.onClose.bind(this));
+            this.getOwnerComponent().getRouter().getRoute("detail").attachPatternMatched(this._onMatched, this);
+            window.addEventListener("popstate", this.onClose.bind(this));
         },
 
         _onMatched: function (oEvent) {
-
             const sId = oEvent.getParameter("arguments").id;
             this.getView().bindElement("/Orders/"+sId);
             this.getView().getModel().setProperty("/isEditMode", false);
-
-            // const oModel = this.getOwnerComponent().getModel();
-            // const aOrders = oModel.getProperty("/Orders");
-
-            // // ✅ FIND ORDER CORRECTLY
-            // const oOrder = aOrders.find(o => o.id == sId);
-
-            // if (!oOrder) {
-            //     console.error("Order not found");
-            //     return;
-            // }
-
-            // ✅ BIND ELEMENT (IMPORTANT)
-            
-            // this.getView().setModel(new sap.ui.model.json.JSONModel(oOrder),"detailModel");
-
         },
 
         onClose: function () {
-            this.getOwnerComponent()
-                .getModel("layout")
-                .setProperty("/layout", "OneColumn");
+            this.getOwnerComponent().getModel("layout").setProperty("/layout", "OneColumn");
         },
         onAccept: function () {
-            const oModel = this.getView().getModel();
             const sPath = this.getView().getBindingContext().getPath();
-            // oModel.setProperty(sPath+'/status',"Accepted");//only for UI update, not for backend
-
             this.updateBackendStatus(sPath, "Accepted");
         },
         onReject: function () {
-            const oModel = this.getView().getModel();
-            // const aOrders = oModel.getProperty("/Orders");
             const sPath = this.getView().getBindingContext().getPath();
-            // oModel.setProperty(sPath+'/status',"Rejected");//only for UI update, not for backend
-//need an API call to update the backend with the new status
             this.updateBackendStatus(sPath, "Rejected");
         },
         onComplete: function () {
-            const oModel = this.getView().getModel();
             const sPath = this.getView().getBindingContext().getPath();
-            // oModel.setProperty(sPath+'/status',"Completed");//only for UI update, not for backend
-//need an API call to update the backend with the new status
             this.updateBackendStatus(sPath, "Completed");
         },
         updateBackendStatus: function (sPath, sStatus) {
-            // Implement the API call to update the backend with the new status
-            // Example using fetch:
             const oMainModel = this.getOwnerComponent().getModel();
             const sMyToken = oMainModel.getProperty("/myToken");
             const oOrderStatus = oMainModel.getProperty("/OrderStatus");
             const oModel = this.getView().getModel();
             const orderId = oModel.getProperty(sPath + '/id');
-            const url = oMainModel.getProperty("/api")+"orderDetails/"+orderId;
+            const url = oMainModel.getProperty("/api")+"statusUpdate/"+orderId;
             fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -90,6 +57,9 @@ sap.ui.define([
             .then(data => {
                 console.log('Backend updated successfully:');
                 this.getOwnerComponent().getModel().setProperty("/Orders", data.orderList);
+                if(sStatus === "Completed" || sStatus === "Rejected"){
+                    this.onClose();
+                }
             })
             .catch(error => {
                 console.error('Error updating backend:', error);
@@ -123,18 +93,14 @@ sap.ui.define([
             this._aCreate.push(oNewItem);
             oMainModel.refresh(true);
         },
-        onFieldChange: function(oEvent) {
-            const oContext = oEvent.getSource().getBindingContext();
-            const oRow = oContext.getObject();
+        _FieldChange: function(oRow) {
+            oRow.total = oRow.price * oRow.qty;
+            const aItems = this.getView().getBindingContext().getObject().items;
+            const totalPrice = aItems.reduce((sum, item) => { return sum + Number(item.total || 0); }, 0);
+            this.getView().getBindingContext().getObject().totalAmount = totalPrice;
+            this.getOwnerComponent().getModel().refresh();
             if(Object.hasOwn(oRow, '_idNew')){
                 return;
-                /*const iIndex = this._aUpdate.findIndex(item => item._idNew === oRow._idNew);
-
-                if (iIndex === -1) {
-                    this._aUpdate.push(structuredClone(oRow));
-                } else {
-                    this._aUpdate[iIndex] = structuredClone(oRow);
-                }*/
             } else {
                 const iIndex = this._aUpdate.findIndex(item => item.id === oRow.id);
 
@@ -144,6 +110,32 @@ sap.ui.define([
                     this._aUpdate[iIndex] = structuredClone(oRow);
                 }
             }            
+        },
+        onItemChange: function(oEvent) {
+            const oContext = oEvent.getSource().getBindingContext();
+            const oRow = oContext.getObject();
+            // const sValue = oEvent.getParameter("value");
+
+            const aItems = this.getView().getModel().getProperty("/stockList") || [];
+
+            const bValid = aItems.some(function(oItem) {
+                return oItem.Name === oRow.name;
+            });
+
+            if (!bValid) {
+                oEvent.getSource().setValue("");
+                oEvent.getSource().setValueState("Error");
+                oEvent.getSource().setValueStateText("Please select a value using Value Help");
+            } else {
+                oEvent.getSource().setValueState("None");
+                this._FieldChange(oRow);
+            }
+        },
+        onQtyChange: function(oEvent){
+            const oContext = oEvent.getSource().getBindingContext();
+            const oRow = oContext.getObject();
+            this._FieldChange(oRow);
+
         },
         onDeleteItem: function(oEvent) {
             const oMainModel = this.getOwnerComponent().getModel();
@@ -177,6 +169,10 @@ sap.ui.define([
             const oMainModel = this.getOwnerComponent().getModel();
             const sMyToken = oMainModel.getProperty("/myToken");
             const oOrderStatus = oMainModel.getProperty("/OrderStatus");
+            if(this._aCreate.length === 0 && this._aUpdate.length === 0 && this._aDelete.length === 0){
+                MessageToast.show("No changes");
+                return;
+            }
             const oPayload = {
                 create: this._aCreate,
                 update: this._aUpdate,
@@ -202,7 +198,7 @@ sap.ui.define([
             .then(data => {
                 MessageToast.show("Saved");
                 this.getView().getModel().setProperty("/isEditMode", false);
-                this.getOwnerComponent().getModel().setProperty("/Orders", data.orderList);
+                oMainModel.setProperty("/Orders", data.orderList);
             })
             .catch(error => {
                 console.error('Error updating backend:', error);
@@ -218,6 +214,106 @@ sap.ui.define([
             // this._aDelete = [];
             this.getView().getModel().setProperty("/isEditMode", false);            
             oMainModel.setProperty(this.getView().getBindingContext().getPath(),structuredClone(oOriginalEditingItem));
+        },
+        onChangeisReady: function(oEvent){
+            debugger;
+            const oMainModel = this.getOwnerComponent().getModel();
+            const sMyToken = oMainModel.getProperty("/myToken");            
+            const oChangeItem = oEvent.getSource().getBindingContext().getObject();
+            const url = oMainModel.getProperty("/api")+"updateIsReady/"+oChangeItem.id;
+
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": "Bearer " + sMyToken
+                },
+                body: JSON.stringify({isReady: oChangeItem.isReady})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                MessageToast.show("Saved");
+            })
+            .catch(error => {
+                console.error('Error updating backend:', error);
+            });
+        },
+
+        onNameValueHelp: async function(oEvent) {
+            // var that = this;
+            var oSource = oEvent.getSource(); // the Input in Table A
+            this._sSelectedRowPath = oSource.getBindingContext().getPath(); // e.g. "/items/2"
+
+            // Store the path of the row being edited
+            // this._sSelectedRowPath = sPath;
+
+            // If dialog not yet loaded, load it asynchronously
+            if (!this._oValueHelpDialog) {
+                this._oValueHelpDialog = await Fragment.load({
+                    id: this.getView().getId(),   // ensures unique IDs
+                    name: "com.bot.resto.restaurantbot.fragments.FoodListVHelp", // fragment path
+                    controller: this
+                });
+
+                this.getView().addDependent(this._oValueHelpDialog);
+            }
+                // Already loaded, just refresh data and open
+            await this._loadStockData();
+            this._oValueHelpDialog.open();
+            
+        },
+
+        // Separate function to fetch backend data
+        _loadStockData: async function() {
+            const oMainModel = this.getOwnerComponent().getModel();
+            const sMyToken = oMainModel.getProperty("/myToken");
+            const url = oMainModel.getProperty("/api")+"stockList";
+            // var oTable = this.byId("nameTable"); // table inside fragment
+
+            await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + sMyToken
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                // var oModel = new sap.ui.model.json.JSONModel({ stockList: data.stockList });
+                //     oTable.setModel(oModel);
+                    this.getView().getModel().setProperty("/stockList", data.stockList);
+                // this.getView().getModel("stockModel").setProperty("/items", data.stockList);
+            })
+            .catch(() => {
+                MessageToast.show("Failed to load data");
+            });
+
+            // fetch("/api/names")
+            //     .then(res => res.json())
+            //     .then(data => {
+            //         var oModel = new sap.ui.model.json.JSONModel({ names: data });
+            //         oTable.setModel(oModel);
+            //     });
+        },
+
+        onCloseValueHelp: function() {
+            this._oValueHelpDialog.close();
+        },
+
+        onSelectFood: function(oEvent) {
+            var selectedObj = oEvent.getSource().getBindingContext().getObject();
+            var oModel = this.getView().getModel();
+
+            oModel.setProperty(this._sSelectedRowPath + "/name", selectedObj.Name);
+            oModel.setProperty(this._sSelectedRowPath + "/price", selectedObj.Price);
+            oModel.setProperty(this._sSelectedRowPath + "/inventory_id", selectedObj.id);
+
+            this._oValueHelpDialog.close();
+            this._FieldChange(oModel.getProperty(this._sSelectedRowPath));
         }
     });
 });

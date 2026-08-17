@@ -1,0 +1,39 @@
+#!/bin/bash
+
+TENANCY_OCID="ocid1.tenancy.oc1..aaaaaaaad4sdin3zchheqbbz3vu2ov37arym6qrqjh23ua5he57rybngsgzq"
+AD="PUwU:AP-HYDERABAD-1-AD-1"
+STACK_OCID="ocid1.ormstack.oc1.ap-hyderabad-1.amaaaaaaeciepkqa56rhmsh5ov4bvov2vw77gifocbdph3ewi5m4vqjfua5a"
+JSON_FILE="/home/varunmohan/shape-availabilities.json"
+
+while true
+do
+    echo "----------------------------------------"
+    echo "Checking A1 capacity: $(date)"
+    echo "----------------------------------------"
+
+    RESULT=$(oci compute compute-capacity-report create \
+      --availability-domain "$AD" \
+      --compartment-id "$TENANCY_OCID" \
+      --shape-availabilities "file://$JSON_FILE" \
+      --query 'data."shape-availabilities"[0]."availability-status"' \
+      --raw-output 2>/dev/null)
+
+    echo "A1 capacity: $RESULT"
+
+    if [ "$RESULT" = "AVAILABLE" ]; then
+        echo "A1 capacity is AVAILABLE!"
+        echo "Starting Apply job..."
+
+        oci resource-manager job create-apply-job \
+          --stack-id "$STACK_OCID" \
+          --execution-plan-strategy AUTO_APPROVED
+
+        echo "Apply job started."
+        echo "Stopping automation."
+        break
+    fi
+
+    echo "Capacity not available."
+    echo "Checking again in 30 minutes..."
+    sleep 1800
+done
