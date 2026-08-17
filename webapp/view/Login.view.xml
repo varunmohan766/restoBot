@@ -1,0 +1,44 @@
+<mvc:View
+    controllerName="com.bot.resto.restaurantbot.controller.Login"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+>
+    <Page showHeader="false">
+        <content>
+            <FlexBox
+                height="100%"
+                width="100%"
+                justifyContent="Center"
+                alignItems="Center"
+            >
+                <VBox
+                    width="20rem"
+                    class="sapUiMediumMargin"
+                >
+                    <Title
+                        text="Login"
+                        level="H2"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Input
+                        value="{/username}"
+                        placeholder="Username"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Input
+                        value="{/password}"
+                        placeholder="Password"
+                        type="Password"
+                        class="sapUiSmallMarginBottom"
+                    />
+                    <Button
+                        text="Login"
+                        type="Emphasized"
+                        width="100%"
+                        press="onClickLogin"
+                    />
+                </VBox>
+            </FlexBox>
+        </content>
+    </Page>
+</mvc:View>

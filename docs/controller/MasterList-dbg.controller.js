@@ -7,7 +7,7 @@ sap.ui.define([
 
     return Controller.extend("com.bot.resto.restaurantbot.controller.MasterList", {
 
-        onInit: async function () {
+        /*onInit: async function () {
             // this.getOwnerComponent()
             //     .getRouter()
             //     .getRoute("master")
@@ -27,7 +27,7 @@ sap.ui.define([
 
             try {
                 // First: get login token
-                await this._getLoginToken();
+                // await this._getLoginToken();
 
                 // Then: call orders with filters (empty object for now)
                 await this._getOrders(statuses);
@@ -36,52 +36,10 @@ sap.ui.define([
                 sap.m.MessageToast.show("Error initializing app: " + err.message);
             }
         },
-        onStatusFilter: function () {
-             this._getOrders(this.getOwnerComponent().getModel().getProperty("/OrderStatus"));
-            //  const selectedStatuses = Object.keys(statuses).filter(key => statuses[key]);             
-        },
-
-        onSelectionChange: function (oEvent) {
-            const oItem = oEvent.getParameter("listItem") || oEvent.getSource();
-            const sId = oItem.getBindingContext().getProperty("id");
-            const sindex = oItem.getBindingContext().getPath().split("/")[2];
-
-            this.getOwnerComponent().getRouter().navTo("detail", { id: sindex });
-
-            this.getOwnerComponent()
-                .getModel("layout")
-                .setProperty("/layout", "TwoColumnsMidExpanded");
-        },
-
-        onSearch: function (oEvent) {
-            // Collect values from UI controls
-//   const orderId = this.byId("orderIdInput").getValue();
-//   const name = this.byId("nameInput").getValue();
-//   const mobile = this.byId("mobileInput").getValue();
-//   const status = this.byId("statusSelect").getSelectedKey();
-const status = oEvent.getParameter("query");
-  // Build filters object
-//   const filters = { vSearchValue, name, mobile, status };
-const filters = {status};
-
-  // Call backend with filters
-  this._getOrders(filters);
-            // const sQuery = oEvent.getParameter("query");
-            // const oList = this.byId("list");
-            // const oBinding = oList.getBinding("items");
-
-            // if (sQuery) {
-            //     oBinding.filter([
-            //         new Filter("customerName", FilterOperator.Contains, sQuery)
-            //     ]);
-            // } else {
-            //     oBinding.filter([]);
-            // }
-        },
         _getLoginToken: async function () {
-            try{
+            try {
                 const api = this.getOwnerComponent().getModel().getProperty("/api");
-                const res = await fetch(api+"login", {
+                const res = await fetch(api + "login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -107,25 +65,41 @@ const filters = {status};
                 throw err;
 
             }
-            
-                
-            /*fetch("http://localhost:3000/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        username: "admin",
-                        password: "admin123"
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    this.myToken = data.token;
-                    // this._getOrders({});
-                })
-                .catch(err => console.log(err));*/
+        },*/
+        onInit: function () {
+            const sMyToken = this.getOwnerComponent().getModel().getProperty("/myToken");
+            if (!sMyToken) {
+                this.getOwnerComponent().getRouter().navTo("login");
+            }
+            this.getOwnerComponent().getRouter().getRoute("master").attachPatternMatched(this._onMatched, this);
         },
+
+        _onMatched: function () {
+            const statuses = {
+                New: true,
+                Accepted: true,
+                Completed: false,
+                Rejected: false
+            };
+            this.getOwnerComponent().getModel().setProperty("/OrderStatus", statuses);
+            this._getOrders(statuses)
+        },
+
+        onStatusFilter: function () {
+            this._getOrders(this.getOwnerComponent().getModel().getProperty("/OrderStatus"));
+            //  const selectedStatuses = Object.keys(statuses).filter(key => statuses[key]);             
+        },
+
+        onSelectionChange: function (oEvent) {
+            const oItem = oEvent.getParameter("listItem") || oEvent.getSource();
+            const sId = oItem.getBindingContext().getProperty("id");
+            const sindex = oItem.getBindingContext().getPath().split("/")[2];
+
+            this.getOwnerComponent().getRouter().navTo("detail", { id: sindex });
+
+            this.getOwnerComponent().getModel("layout").setProperty("/layout", "TwoColumnsMidExpanded");
+        },
+
         _getOrders: function (statuses) {
             var oMainModel = this.getOwnerComponent().getModel();
             const sMyToken = oMainModel.getProperty("/myToken");
@@ -138,42 +112,35 @@ const filters = {status};
             // Pick only the statuses that are true
             Object.entries(statuses).forEach(([key, value]) => {
                 if (value === true) {
-                queryParams.append("status", key);
+                    queryParams.append("status", key);
                 }
             });
-            const url = oMainModel.getProperty("/api")+"orderDetails";
+            const url = oMainModel.getProperty("/api") + "orderDetails";
             const fullUrl = queryParams.toString() ? `${url}?${queryParams.toString()}` : url;
             fetch(fullUrl, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": "Bearer " + sMyToken
-                    }
-                })
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + sMyToken
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     oMainModel.setProperty("/Orders", structuredClone(data.orderList));
-                    
+
                     // var oModel = new sap.ui.model.json.JSONModel(data);
                     // sap.ui.getCore().setModel(oModel, "apiModel");
                 })
-                .catch(err => console.error(err));
+                .catch(err => {
+                    console.error(err);
+                });
         },
-        _getOrders1: function () {
-            fetch("http://localhost:3000/orders", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": "Bearer " + this.myToken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    var oModel = new sap.ui.model.json.JSONModel(data);
-                    sap.ui.getCore().setModel(oModel, "apiModel");
-                })
-                .catch(err => console.error(err));
-        },        
+
         onStockPress: function () {
             this.getOwnerComponent().getRouter().navTo("stock");
+        },
+
+        onSearch: function(){
+            
         }
     });
 });

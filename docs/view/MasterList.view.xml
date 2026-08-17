@@ -3,42 +3,50 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:semantic="sap.f.semantic"
-    xmlns:core="sap.ui.core">
-
+    xmlns:core="sap.ui.core"
+>
     <semantic:SemanticPage>
-
         <semantic:titleHeading>
-            <Title text="Restaurant Orders"/>
+            <Title text="Restaurant Orders" />
         </semantic:titleHeading>
 
         <semantic:content>
-
             <List
                 id="list"
                 items="{/Orders}"
                 growing="true"
                 growingScrollToLoad="true"
-                selectionChange=".onSelectionChange">
-
+                selectionChange=".onSelectionChange"
+            >
                 <!-- HEADER TOOLBAR -->
                 <headerToolbar>
                     <OverflowToolbar>
-                    
-                    <HBox>
-        <CheckBox text="New" selected="{/OrderStatus/New}" select="onStatusFilter"/>
-        <CheckBox text="Accepted" selected="{/OrderStatus/Accepted}" select="onStatusFilter"/>
-        <CheckBox text="Completed" selected="{/OrderStatus/Completed}" select="onStatusFilter"/>
-        <CheckBox text="Rejected" selected="{/OrderStatus/Rejected}" select="onStatusFilter"/>
-        <!-- <MultiComboBox  selectionChange="onStatusFilter" items="{ path: 'statusModel>/statuses' }">
-            <core:Item key="{statusModel>key}" text="{statusModel>text}"/>
-        </MultiComboBox> -->
-      </HBox>
-                        <!-- <SearchField
+                        <HBox>
+                            <CheckBox
+                                text="New"
+                                selected="{/OrderStatus/New}"
+                                select="onStatusFilter"
+                            />
+                            <CheckBox
+                                text="Accepted"
+                                selected="{/OrderStatus/Accepted}"
+                                select="onStatusFilter"
+                            />
+                            <CheckBox
+                                text="Completed"
+                                selected="{/OrderStatus/Completed}"
+                                select="onStatusFilter"
+                            />
+                            <CheckBox
+                                text="Rejected"
+                                selected="{/OrderStatus/Rejected}"
+                                select="onStatusFilter"
+                            />
+                        </HBox>
+                        <SearchField
                             width="100%"
                             placeholder="Search Orders"
-                            search=".onSearch" />
-                        <ToolbarSpacer/>
-                        <Button icon="sap-icon://filter"/> -->
+                            search="onSearch" />
                     </OverflowToolbar>
                 </headerToolbar>
 
@@ -48,12 +56,13 @@
                         press=".onSelectionChange"
                         title="{= 'Order #' + ${id}}"
                         number="{totalAmount}"
-                        numberUnit="₹">
-
+                        numberUnit="₹"
+                    >
                         <firstStatus>
                             <ObjectStatus
                                 text="{status}"
-                                state="{Warning}"/>
+                                state="{Warning}"
+                            />
                         </firstStatus>
 
                         <attributes>
@@ -61,16 +70,15 @@
                             <ObjectAttribute text="{mobile}" />
                             <!-- <Link text="{mobile}" href="{= 'tel:' + ${mobile} }" /> -->
                         </attributes>
-
                     </ObjectListItem>
                 </items>
-
             </List>
-
         </semantic:content>
         <semantic:titleMainAction>
-			<semantic:TitleMainAction text="Stock Details" press="onStockPress"/>
-		</semantic:titleMainAction>
+            <semantic:TitleMainAction
+                text="Stock Details"
+                press="onStockPress"
+            />
+        </semantic:titleMainAction>
     </semantic:SemanticPage>
-
 </mvc:View>

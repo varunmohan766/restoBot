@@ -6,7 +6,8 @@
 		"i18n": {
 			"bundleUrl": "i18n/i18n.properties",
 			"supportedLocales": [
-				""
+				"",
+				"en"
 			]
 		},
 		"applicationVersion": {
@@ -61,7 +62,8 @@
 				"settings": {
 					"bundleName": "com.bot.resto.restaurantbot.i18n.i18n",
 					"supportedLocales": [
-						""
+						"",
+						"en"
 					]
 				}
 			}
@@ -85,6 +87,11 @@
 			"routes": [
 				{
 					"pattern": "",
+					"name": "login",
+					"target": "login"
+				},
+				{
+					"pattern": "master",
 					"name": "master",
 					"target": "master"
 				},
@@ -106,6 +113,12 @@
 				}
 			],
 			"targets": {
+				"login": {
+					"name": "Login",
+					"id": "login",
+					"level": 0,
+					"controlAggregation": "beginColumnPages"
+				},
 				"master": {
 					"name": "MasterList",
 					"level": 1,

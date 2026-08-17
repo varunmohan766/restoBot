@@ -3,30 +3,27 @@
     xmlns="sap.m"
     xmlns:semantic="sap.f.semantic"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns:l="sap.ui.layout">
-
+    xmlns:l="sap.ui.layout"
+>
     <semantic:SemanticPage showFooter="true">
-
-        <!-- ✅ TITLE -->
         <semantic:titleHeading>
             <Title text="{= 'Order #' + ${id}}" />
         </semantic:titleHeading>
-
-        <!-- ✅ HEADER -->
+        
         <semantic:headerContent>
-
             <l:HorizontalLayout>
-
                 <l:VerticalLayout class="sapUiLargeMarginEnd">
-
-                    <ObjectAttribute title="Customer" text="{customerName}" />
-                    <!-- <ObjectAttribute title="Mobile" text="{mobile}" />                     -->
-                    <Link text="{mobile}" href="{= 'tel:' + ${mobile} }" />
-
+                    <ObjectAttribute
+                        title="Customer"
+                        text="{customerName}"
+                    />
+                    <Link
+                        text="{mobile}"
+                        href="{= 'tel:' + ${mobile} }"
+                    />
                     <!-- <ObjectAttribute title="Payment" text="{paymentStatus}" /> -->
                     <!-- <ObjectAttribute title="Status" text="{status}" /> -->
                     <!-- <ObjectStatus title="Status" text="{status}" state="Success" /> -->
-
                 </l:VerticalLayout>
                 <!-- <l:VerticalLayout class="sapUiLargeMarginEnd">
                     <Label text="Payment"/>
@@ -34,89 +31,134 @@
                 </l:VerticalLayout> -->
 
                 <l:VerticalLayout class="sapUiLargeMarginEnd">
-                    <Label text="Total"/>
-                    <ObjectNumber number="{totalAmount}" unit="₹"/>
+                    <Label text="Total" />
+                    <ObjectNumber
+                        number="{totalAmount}"
+                        unit="₹"
+                    />
                 </l:VerticalLayout>
                 <l:VerticalLayout>
-                    <Label text="Status"/>
-                    <ObjectStatus text="{status}" state="Success" />
+                    <Label text="Status" />
+                    <ObjectStatus
+                        text="{status}"
+                        state="Success"
+                    />
                 </l:VerticalLayout>
-
             </l:HorizontalLayout>
-
         </semantic:headerContent>
 
-        <!-- ✅ CONTENT -->
         <semantic:content>
-
             <Table items="{items}">
-
                 <headerToolbar>
                     <Toolbar>
-                        <Title text="Line Items"/>
-                        <ToolbarSpacer/>
-                        <Button text="Add Item" press="onAddItem" visible="{/isEditMode}"/>
+                        <Title text="Line Items" />
+                        <ToolbarSpacer />
+                        <Button
+                            text="Add Item"
+                            press="onAddItem"
+                            visible="{/isEditMode}"
+                        />
                     </Toolbar>
                 </headerToolbar>
-
                 <columns>
-                    <Column><Text text="Item"/></Column>
-                    <Column><Text text="Price"/></Column>
-                    <Column><Text text="Qty"/></Column>
-                    <Column><Text text="Total"/></Column>
-                    <Column><Text text="Ready"/></Column>
-                    <Column visible="{/isEditMode}"><Text text="Action"/></Column>
+                    <Column>
+                        <Text text="Item" />
+                    </Column>
+                    <Column>
+                        <Text text="Price" />
+                    </Column>
+                    <Column>
+                        <Text text="Qty" />
+                    </Column>
+                    <Column>
+                        <Text text="Total" />
+                    </Column>
+                    <Column>
+                        <Text text="Ready" />
+                    </Column>
+                    <Column visible="{/isEditMode}">
+                        <Text text="Action" />
+                    </Column>
                 </columns>
-
                 <items>
                     <ColumnListItem>
                         <cells>
-                            <!-- <Text text="{name}" /> -->
-                            <Input value="{name}" editable="{= ${/isEditMode} &amp;&amp; ${_idNew} !== undefined}" change="onItemChange" showValueHelp="true" valueHelpRequest="onNameValueHelp"/>
+                            <Input
+                                value="{name}"
+                                editable="{= ${/isEditMode} &amp;&amp; ${_idNew} !== undefined}"
+                                change="onItemChange"
+                                showValueHelp="true"
+                                valueHelpRequest="onNameValueHelp"
+                            />
                             <Text text="{price}" />
-                            <!-- <Text text="{qty}" /> -->
-                            <Input value="{qty}" editable="{/isEditMode}" change="onQtyChange"/>
-                            <Text text="{total}"/>
-                            <!-- <Text text="{status}" /> -->
-                            <CheckBox selected="{isReady}" select="onChangeisReady"/>
-                            <Button text="Delete" press="onDeleteItem" visible="{/isEditMode}"/>
+                            <Input
+                                value="{qty}"
+                                editable="{/isEditMode}"
+                                change="onQtyChange"
+                            />
+                            <Text text="{total}" />
+                            <CheckBox
+                                selected="{isReady}"
+                                select="onChangeisReady"
+                            />
+                            <Button
+                                text="Delete"
+                                press="onDeleteItem"
+                                visible="{/isEditMode}"
+                            />
                         </cells>
                     </ColumnListItem>
                 </items>
-
             </Table>
-
         </semantic:content>
 
         <semantic:titleMainAction>
-			<semantic:TitleMainAction text="Edit" press="onEdit" visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Completed' &amp;&amp; ${status} !== 'Rejected' }"/>
-		</semantic:titleMainAction>
+            <semantic:TitleMainAction
+                text="Edit"
+                press="onEdit"
+                visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Completed' &amp;&amp; ${status} !== 'Rejected' }"
+            />
+        </semantic:titleMainAction>
 
         <semantic:footerMainAction>
-			<semantic:FooterMainAction text="Save" press="onSave" visible="{/isEditMode}"/>
-		</semantic:footerMainAction>
+            <semantic:FooterMainAction
+                text="Save"
+                press="onSave"
+                visible="{/isEditMode}"
+            />
+        </semantic:footerMainAction>
 
-		<semantic:footerCustomActions>
-			<Button  text="Cancel" press="onCancel" visible="{/isEditMode}"/>
-		</semantic:footerCustomActions>
-
-        <!-- ✅ BUTTONS (THIS WAS MISSING) -->
         <semantic:footerCustomActions>
-
-            <!-- <Toolbar> -->
-                <!-- <ToolbarSpacer/> -->
-                <Button text="Complete" type="Accept" press="onComplete" visible="{= !${/isEditMode} &amp;&amp; ${status} === 'Accepted' &amp;&amp; ${status} !== 'Completed'}"/>
-                <Button text="Accept" type="Accept" press="onAccept" visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Completed'}" />
-                <Button text="Reject" type="Reject" press="onReject" visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Completed'}"/>
-            <!-- </Toolbar> -->
-
+            <Button
+                text="Cancel"
+                press="onCancel"
+                visible="{/isEditMode}"
+            />
         </semantic:footerCustomActions>
 
-        <!-- ✅ CLOSE BUTTON -->
+        <semantic:footerCustomActions>
+            <Button
+                text="Complete"
+                type="Accept"
+                press="onComplete"
+                visible="{= !${/isEditMode} &amp;&amp; ${status} === 'Accepted' &amp;&amp; ${status} !== 'Completed'}"
+            />
+            <Button
+                text="Accept"
+                type="Accept"
+                press="onAccept"
+                visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Completed'}"
+            />
+            <Button
+                text="Reject"
+                type="Reject"
+                press="onReject"
+                visible="{= !${/isEditMode} &amp;&amp; ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Completed'}"
+            />
+        </semantic:footerCustomActions>
+
         <semantic:closeAction>
-            <semantic:CloseAction press=".onClose"/>
+            <semantic:CloseAction press=".onClose" />
         </semantic:closeAction>
-
     </semantic:SemanticPage>
-
 </mvc:View>

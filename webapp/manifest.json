@@ -75,6 +75,11 @@
         "routes": [
           {
             "pattern": "",
+            "name": "login",
+            "target": "login"
+          },
+          {
+            "pattern": "master",
             "name": "master",
             "target": "master"
           },
@@ -91,6 +96,12 @@
           }
         ],
         "targets": {
+          "login": {
+            "name": "Login",
+            "id": "login",
+            "level": 0,
+            "controlAggregation": "beginColumnPages"
+            },  
           "master": {
             "name": "MasterList",
             "level": 1,

@@ -6,37 +6,39 @@ sap.ui.define([
 ], function (Controller, JSONModel, MessageToast, MessageBox) {
   "use strict";
 
-  return Controller.extend("com.bot.resto.restaurantbot.controller.StockDetails", {
+  return Controller.extend("com.bot.resto.restaurantbot.controller.StockDetails", {    
 
     onInit: function () {
-      
+      const sMyToken = this.getOwnerComponent().getModel().getProperty("/myToken");
+      if (!sMyToken) {
+        this.getOwnerComponent().getRouter().navTo("login");
+      }
       this.getOwnerComponent().getRouter().getRoute("stock").attachPatternMatched(this._onMatched, this);
     },
-    _onMatched: function(){
+
+    _onMatched: function () {
       this._initModel();
       this._loadData();
     },
-    // ✅ INIT MODEL
+    
     _initModel: function () {
       var oModel = new JSONModel({
         items: [],
         isEdit: false
       });
-
       this.getView().setModel(oModel, "stockModel");
     },
 
-    // ✅ LOAD DATA FROM API
     _loadData: function () {
       const oMainModel = this.getOwnerComponent().getModel();
       const sMyToken = oMainModel.getProperty("/myToken");
-      const url = oMainModel.getProperty("/api")+"stockList";
-    //   fetch(sap.ui.require.toUrl("com/bot/resto/restaurantbot/model/mockStock.json"))
+      const url = oMainModel.getProperty("/api") + "stockList";
+
       fetch(url, {
-          method: "GET",
-          headers: {
-              "Authorization": "Bearer " + sMyToken
-          }
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + sMyToken
+        }
       })
         .then(res => res.json())
         .then(data => {
@@ -47,135 +49,85 @@ sap.ui.define([
         });
     },
 
-    // ✅ TOGGLE EDIT MODE
     onEditToggle: function () {
       var oModel = this.getView().getModel("stockModel");
       oModel.setProperty("/isEdit", true);
       MessageToast.show("Edit mode enabled");
       let oOriginalEditingItem = oModel.getProperty("/items");
-      
+
       oModel.setProperty("/OriginalEditingItem", structuredClone(oOriginalEditingItem));
       this._aCreate = [];
       this._aDelete = [];
       this._aUpdate = [];
-
-      // if (!bEdit) {
-        
-      // } else {
-      //   MessageToast.show("Edit mode disabled");
-      // }
     },
 
-    // ✅ ADD NEW ROW
     onAddItem: function () {
       var oModel = this.getView().getModel("stockModel");
       var aItems = oModel.getProperty("/items");
 
       const oNewItem = {
-                Name: "",
-                Description: "",
-                Quantity: 0,
-                Price: 0,
-                Status: "",
-                category:"",
-                veg_nonveg: "",
-                _idNew: this._aCreate[this._aCreate.length-1]?._idNew + 1 || 0
-          };
+        Name: "",
+        Description: "",
+        Quantity: 0,
+        Price: 0,
+        Status: "",
+        category: "",
+        veg_nonveg: "",
+        _idNew: this._aCreate[this._aCreate.length - 1]?._idNew + 1 || 0
+      };
       aItems.push(oNewItem);
       this._aCreate.push(oNewItem);
       oModel.refresh(true);
-
-      // oModel.setProperty("/items", aItems);
     },
 
-    onFieldChange: function(oEvent) {
-            const oContext = oEvent.getSource().getBindingContext("stockModel");
-            const oRow = oContext.getObject();
-            if(Object.hasOwn(oRow, '_idNew')){
-                return;
-                /*const iIndex = this._aUpdate.findIndex(item => item._idNew === oRow._idNew);
+    onFieldChange: function (oEvent) {
+      const oContext = oEvent.getSource().getBindingContext("stockModel");
+      const oRow = oContext.getObject();
+      if (Object.hasOwn(oRow, '_idNew')) {
+        return;
+      } else {
+        const iIndex = this._aUpdate.findIndex(item => item.id === oRow.id);
 
-                if (iIndex === -1) {
-                    this._aUpdate.push(structuredClone(oRow));
-                } else {
-                    this._aUpdate[iIndex] = structuredClone(oRow);
-                }*/
-            } else {
-                const iIndex = this._aUpdate.findIndex(item => item.id === oRow.id);
+        if (iIndex === -1) {
+          this._aUpdate.push(structuredClone(oRow));
+        } else {
+          this._aUpdate[iIndex] = structuredClone(oRow);
+        }
+      }
+    },
 
-                if (iIndex === -1) {
-                    this._aUpdate.push(structuredClone(oRow));
-                } else {
-                    this._aUpdate[iIndex] = structuredClone(oRow);
-                }
-            }            
-        },
-
-    // ✅ DELETE ITEM (UI + TRACK FOR API)
     onDeleteItem: function (oEvent) {
-      // var oContext = oEvent.getSource().getBindingContext("stockModel");
-      // const oRow = oContext.getObject();
+      const oModel = this.getView().getModel("stockModel");
+      const oContext = oEvent.getSource().getBindingContext("stockModel");
+      const oRow = oContext.getObject();
+      const sPath = oContext.getPath();
+      const iIndex = Number(sPath.split("/")[2]);
+      const aItems = oModel.getProperty("/items");
 
+      if (Object.hasOwn(oRow, '_idNew')) {
+        this._aCreate = this._aCreate.filter(item => item._idNew !== oRow._idNew);
+      } else {
+        const bExists = this._aDelete.some(item => item.id === oRow.id);
 
+        if (!bExists) {
+          this._aDelete.push({
+            id: oRow.id
+          });
+        }
+        this._aUpdate = this._aUpdate.filter(item => item.id !== oRow.id);
+      }
 
-
-            // const oMainModel = this.getOwnerComponent().getModel();
-            const oModel = this.getView().getModel("stockModel");
-            const oContext = oEvent.getSource().getBindingContext("stockModel");
-            const oRow = oContext.getObject();
-
-            const sPath = oContext.getPath();
-
-            const iIndex = Number(sPath.split("/")[2]);
-            const aItems =  oModel.getProperty("/items");
-            
-
-            if (Object.hasOwn(oRow, '_idNew')) {
-                this._aCreate = this._aCreate.filter( item => item._idNew !== oRow._idNew);
-            } else {
-                const bExists = this._aDelete.some( item => item.id === oRow.id);
-
-                if (!bExists) {
-                    this._aDelete.push({
-                        id: oRow.id
-                    });
-                }
-                this._aUpdate = this._aUpdate.filter( item => item.id !== oRow.id);
-            }
-
-            aItems.splice(iIndex, 1);
-            oModel.refresh(true);
-      // var oModel = this.getView().getModel("stockModel");
-      // var oContext = oEvent.getSource().getBindingContext("stockModel");
-
-      // var sPath = oContext.getPath();  // /items/2
-      // var iIndex = parseInt(sPath.split("/")[2]);
-
-      // var aItems = oModel.getProperty("/items");
-      // var aDeleted = oModel.getProperty("/deletedItems");
-
-      // var oDeletedItem = aItems[iIndex];
-
-      // If already existing item, mark for delete
-      // if (!oDeletedItem.isNew) {
-      //   aDeleted.push(oDeletedItem);
-      // }
-
-      // // Remove from UI
-      // aItems.splice(iIndex, 1);
-
-      // oModel.setProperty("/items", aItems);
-      // oModel.setProperty("/deletedItems", aDeleted);
+      aItems.splice(iIndex, 1);
+      oModel.refresh(true);
     },
 
-    // ✅ SAVE (CREATE + UPDATE + DELETE)
     onSave: function () {
       var oModel = this.getView().getModel("stockModel");
 
       const oPayload = {
-          create: this._aCreate,
-          update: this._aUpdate,
-          delete: this._aDelete
+        create: this._aCreate,
+        update: this._aUpdate,
+        delete: this._aDelete
       };
       const oMainModel = this.getOwnerComponent().getModel();
       const sMyToken = oMainModel.getProperty("/myToken");
@@ -183,28 +135,27 @@ sap.ui.define([
       MessageBox.confirm("Do you want to save changes?", {
         onClose: (sAction) => {
           if (sAction === "OK") {
-            const url = oMainModel.getProperty("/api")+"stockBatch";
+            const url = oMainModel.getProperty("/api") + "stockBatch";
 
             fetch(url, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
-                    "Authorization": "Bearer " + sMyToken
+                "Authorization": "Bearer " + sMyToken
               },
               body: JSON.stringify(oPayload)
             })
               .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                  throw new Error('Network response was not ok');
                 }
                 return response.json();
-            })
-            .then(data => {
+              })
+              .then(data => {
                 MessageToast.show("Saved successfully");
 
                 oModel.setProperty("/isEdit", false);
                 oModel.setProperty("/items", data.stockList);
-                // this._loadData();
               })
               .catch(() => {
                 MessageToast.show("Save failed");
@@ -213,19 +164,20 @@ sap.ui.define([
           }
         }
       });
-    },    
-    onCancel: function() {
-        var oModel = this.getView().getModel("stockModel");
-        let oOriginalEditingItem = oModel.getProperty("/OriginalEditingItem");
-        // this._aCreate = [];
-        // this._aUpdate = [];
-        // this._aDelete = [];
-        oModel.setProperty("/isEdit", false);            
-        oModel.setProperty("/items",structuredClone(oOriginalEditingItem));
     },
+
+    onCancel: function () {
+      var oModel = this.getView().getModel("stockModel");
+      let oOriginalEditingItem = oModel.getProperty("/OriginalEditingItem");
+      // this._aCreate = [];
+      // this._aUpdate = [];
+      // this._aDelete = [];
+      oModel.setProperty("/isEdit", false);
+      oModel.setProperty("/items", structuredClone(oOriginalEditingItem));
+    },
+
     onNavBack: function () {
       this.getOwnerComponent().getRouter().navTo("master");
     }
-
   });
 });
